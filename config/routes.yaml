@@ -1,0 +1,16 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+authentication_token:
+  path: /api/login
+  methods: ['POST']
+
+#showApprenantById:
+ # path: /api/apprenants/{id}
+  #controller: App\Controller\ApprenantController::showApprenantById
+  #methods: ['GET']
+
+#showFormateurById:
+ # path: /api/formateurs/{id}
+  #controller: App\Controller\FormateurController::showFormateurById
+  #methods: ['GET']

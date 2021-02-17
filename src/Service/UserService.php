@@ -8,6 +8,7 @@ use App\Entity\Apprenant;
 use App\Entity\Cm;
 use App\Entity\Formateur;
 use App\Repository\ProfilRepository;
+use App\Repository\PromoRepository;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -30,12 +31,17 @@ class UserService
      * @var ProfilRepository
      */
     private $profilRepository;
+    /**
+     * @var PromoRepository
+     */
+    private $promoRepository;
 
-    public function __construct(UserPasswordEncoderInterface $encoder, DenormalizerInterface $serializer, ProfilRepository $profilRepository)
+    public function __construct(UserPasswordEncoderInterface $encoder, DenormalizerInterface $serializer, ProfilRepository $profilRepository, PromoRepository $promoRepository)
     {
         $this->encoder = $encoder;
         $this->serializer = $serializer;
         $this->profilRepository = $profilRepository;
+        $this->promoRepository = $promoRepository;
     }
 
     public function addApprenant($profil, Request $request, ValidatorInterface $validator,ProfilRepository $repo)
@@ -73,13 +79,13 @@ class UserService
             $avatar = fopen($file, 'r+');
             $userTab['avatar'] = $avatar;
         }
-        if($userTab['profil'] == "Admin"){
+        if($userTab['profil'] == "ADMIN"){
             $userType = Admin::class;
-        }elseif($userTab['profil'] == "Formateur"){
+        }elseif($userTab['profil'] == "FORMATEUR"){
             $userType = Formateur::class;
-        }elseif($userTab['profil'] == "Apprenant"){
+        }elseif($userTab['profil'] == "APPRENANT"){
             $userType = Apprenant::class;
-        }elseif($userTab['profil'] == "Cm"){
+        }elseif($userTab['profil'] == "CM"){
             $userType = Cm::class;
         }
         //dd($user);
@@ -136,5 +142,10 @@ class UserService
         //dd($data);
 
         return $data;
+    }
+
+    public function getApprenantAttente()
+    {
+        return $this->promoRepository->findApprenantAttente();
     }
 }

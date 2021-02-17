@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
+
     /**
      * @Route("/user", name="user")
      */
@@ -58,7 +59,7 @@ class UserController extends AbstractController
         //dd($apprenant);
         $manager->persist($user);
         $manager->flush();
-        return new JsonResponse("Success", 200, [], true);
+        return $this->json('Success', 201);
 
     }
 
@@ -72,13 +73,15 @@ class UserController extends AbstractController
      *          "__api_resource_class"="App\Entity\User::class"
      *     }
      * )
+     * @param UserPasswordEncoderInterface $encoder
      * @param UserService $service
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @param UserRepository $userRepository
+     * @param $id
      * @return JsonResponse
      */
-    public function updateUser(UserService $service, Request $request, EntityManagerInterface $manager, UserRepository $userRepository, $id)
+    public function updateUser(UserPasswordEncoderInterface $encoder, UserService $service, Request $request, EntityManagerInterface $manager, UserRepository $userRepository, $id)
     {
         $user = $userRepository->find($id);
         //$user = $request->attributes->get('data');
@@ -89,6 +92,12 @@ class UserController extends AbstractController
             $setter = 'set'.ucfirst(trim(strtolower($key)));
             //dd($setter);
             if(method_exists(User::class, $setter)) {
+                if ($setter == 'setPassword') {
+                    $password = $encoder->encodePassword($user, $userUpdate['password']);
+                    /*dd($password);*/
+                    $user->setPassword($userUpdate['password']);
+                    /*dd($user);*/
+                }
                 if($setter == 'setProfil') {
                     $user->setProfil($userUpdate['profil']);
                 }else{

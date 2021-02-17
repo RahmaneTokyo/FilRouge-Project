@@ -33,20 +33,29 @@ class ProfilDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+        $id = $data ->getId();
+        if($data->setArchived(false))
+        {
+            $user = $this->userRepository->findBy(['profil' =>$id]);
+            foreach ($user as $users)
+            {
+                $users->setArchived(false);
+                $this->entityManager->persist($users);
+            }
+        }
         $this->entityManager->persist($data);
         $this->entityManager->flush();
     }
 
     public function remove($data, array $context = [])
     {
-        $id = $data->getId();
+
         $data->setArchived(true);
-        $user = $this->userRepository->findBy(['profil' =>$id]);
-        foreach ($user as $users)
-        {
-            $users->setArchived(true);
-            $this->entityManager->persist($users);
+        $users = $data->getUsers();
+        foreach ($users as $key => $value) {
+            $value->setArchived(true);
         }
+        $this->entityManager->persist($data);
         $this->entityManager->flush();
     }
 }

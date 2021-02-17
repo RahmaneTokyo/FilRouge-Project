@@ -53,12 +53,13 @@ class Profil
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups ({"profil:read","user:read","profiluser:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read"})
+     * @Groups({"profil:read","user:read","profiluser:read"})
      * @Assert\NotBlank(
      *     message="This fiels cannot be null !"
      * )
@@ -67,9 +68,6 @@ class Profil
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank(
-     *     message="This fiels cannot be null !"
-     * )
      */
     private $archived = false;
 

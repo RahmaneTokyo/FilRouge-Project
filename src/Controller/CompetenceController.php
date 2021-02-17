@@ -58,6 +58,7 @@ class CompetenceController extends AbstractController
         {
             foreach ($competenceTab['niveau'] as $niveau) {
                 $niveauRepo = $manager->getRepository(Niveau::class)->find($niveau['id']);
+                //dd($niveauRepo);
                 $niveauRepo->setLevel($niveau['level']);
                 $manager->persist($niveauRepo);
             }

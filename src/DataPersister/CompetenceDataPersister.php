@@ -46,7 +46,7 @@ class CompetenceDataPersister implements ContextAwareDataPersisterInterface
     {
         $data->setArchived(true);
         $id = $data->getId();
-        $niveau = $this->niveauRepository->findBy(['niveau' =>$id]);
+        $niveau = $this->niveauRepository->findBy(['competence' =>$id]);
         foreach ($niveau as $niveaux)
         {
             $niveaux->setArchived(false);

@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\NiveauRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=NiveauRepository::class)
@@ -19,17 +20,34 @@ class Niveau
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"competence:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string")
-     * @Groups({"competence:read","competence:write","niveau:write","grpecompetence:write","grpecompetence:read"})
+     * @Groups({"competence:read","competence:write","niveau:write","grpecompetence:write","grpecompetence:read","referentiel:write"})
+     * @Assert\NotBlank
      */
     private $level;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"competence:read","competence:write","niveau:write","grpecompetence:write","grpecompetence:read","referentiel:write"})
+     * @Assert\NotBlank
+     */
+    private $admission;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"competence:read","competence:write","niveau:write","grpecompetence:write","grpecompetence:read","referentiel:write"})
+     * @Assert\NotBlank
+     */
+    private $evaluation;
+
+    /**
      * @ORM\Column(type="boolean")
+     * @Groups({"competence:write"})
      */
     private $archived = false;
 
@@ -76,6 +94,30 @@ class Niveau
     public function setCompetence(?Competence $competence): self
     {
         $this->competence = $competence;
+
+        return $this;
+    }
+
+    public function getAdmission(): ?string
+    {
+        return $this->admission;
+    }
+
+    public function setAdmission(string $admission): self
+    {
+        $this->admission = $admission;
+
+        return $this;
+    }
+
+    public function getEvaluation(): ?string
+    {
+        return $this->evaluation;
+    }
+
+    public function setEvaluation(string $evaluation): self
+    {
+        $this->evaluation = $evaluation;
 
         return $this;
     }

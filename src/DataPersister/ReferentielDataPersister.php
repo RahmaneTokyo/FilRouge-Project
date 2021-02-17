@@ -6,30 +6,26 @@ namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\ProfilSortie;
+use App\Entity\Referentiel;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class ProfilSortieDataPersister implements ContextAwareDataPersisterInterface
+class ReferentielDataPersister implements ContextAwareDataPersisterInterface
 {
 
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $userPasswordEncoder)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->passwordEncoder = $userPasswordEncoder;
     }
     
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof ProfilSortie;
+        return $data instanceof Referentiel;
     }
 
     public function persist($data, array $context = [])

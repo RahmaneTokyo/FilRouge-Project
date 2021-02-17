@@ -17,19 +17,27 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     denormalizationContext={"groups":{"competence:write"}},
  *     collectionOperations={
  *          "get"={
- *              "path"="/admin/competences"
+ *              "path"="/admin/competences",
+ *              "security"="is_granted('ROLE_ADMIN') || is_granted('ROLE_FORMATEUR') || is_granted('ROLE_CM')",
+ *              "security_message"="Access denied !"
  *          },
  *          "post"={
- *              "path"="/admin/competences"
+ *              "path"="/admin/competences",
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Access denied !"
  *          }
  *     },
  *     itemOperations={
  *          "get"={
- *              "path"="/admin/competences/{id}"
+ *              "path"="/admin/competences/{id}",
+ *              "security"="is_granted('ROLE_ADMIN') || is_granted('ROLE_FORMATEUR') || is_granted('ROLE_CM')",
+ *              "security_message"="Access denied !"
  *          },
  *          "put"={
  *              "path"="/admin/competences/{id}",
- *              "route_name"="putCompetence"
+ *              "route_name"="putCompetence",
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Access denied !"
  *          },
  *          "delete"={
  *              "path"="/admin/competences/{id}"
@@ -43,19 +51,21 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"competence:read","grpecompetence:read"})
+     * @Groups({"grpecompetence:write","competence:read","grpecompetence:read","comp:read","grpecomp:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competence:read","competence:write","grpecompetence:write","grpecompetence:read"})
+     * @Groups({"competence:read","competence:write","grpecompetence:read","comp:read","grpecomp:read","referentiel:write","promo_referentiel:read"})
+     * @Assert\NotBlank
      */
     private $nomCompetence;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competence:read","competence:write","grpecompetence:write","grpecompetence:read"})
+     * @Groups({"competence:read","competence:write","grpecompetence:read","comp:read","grpecomp:read","referentiel:write","promo_referentiel:read"})
+     * @Assert\NotBlank
      */
     private $description;
 
@@ -66,12 +76,14 @@ class Competence
 
     /**
      * @ORM\ManyToMany(targetEntity=GpeCompetence::class, mappedBy="competence", cascade={"persist"})
+     * @Groups({"competence:write", "competence:read"})
+     * @Assert\NotBlank
      */
     private $gpeCompetences;
 
     /**
      * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competence", cascade={"persist"})
-     * @Groups({"competence:read","competence:write","grpecompetence:write","grpecompetence:read"})
+     * @Groups({"competence:read","competence:write","grpecompetence:read","referentiel:write"})
      * @Assert\Count(
      *      min = 3,
      *      max = 3,

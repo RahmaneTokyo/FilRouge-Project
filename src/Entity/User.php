@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,7 +17,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"admin"="Admin", "apprenant"="Apprenant", "cm"="Cm", "formateur"="Formateur", "user"="User"})
- * @ApiFilter(SearchFilter::class, properties={"archived": "exact"})
  * @ApiResource(
  *     normalizationContext={"groups"={"user:read"}},
  *     attributes={
@@ -46,13 +46,13 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user:read","profiluser:read","apprenant:read","formateur:read"})
+     * @Groups({"users_of_profils_sortie:read","user:read","profiluser:read","apprenant:read","formateur:read","promo_apprenant:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"user:read","profiluser:read","apprenant:read","formateur:read"})
+     * @Groups({"users_of_profils_sortie:read","user:read","profiluser:read","apprenant:read","formateur:read","groupe:read","groupe_apprenant:read","promo:read","promo_principal:read","promo_formateur:read","promo_attente:read"})
      * @Assert\Email(
      *     message="This is not a valid email"
      * )
@@ -70,12 +70,13 @@ class User implements UserInterface
      * @Assert\NotBlank(
      *     message="This fiels cannot be null !"
      * )
+     * @Groups({"user:read"})
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read","profiluser:read","apprenant:read","formateur:read"})
+     * @Groups({"users_of_profils_sortie:read","user:read","profiluser:read","apprenant:read","formateur:read","groupe:read","groupe_apprenant:read","promo:read","promo_principal:read","promo_formateur:read","promo_attente:read"})
      * @Assert\NotBlank(
      *     message="This fiels cannot be null !"
      * )
@@ -84,7 +85,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read","profiluser:read","apprenant:read","formateur:read"})
+     * @Groups({"users_of_profils_sortie:read","user:read","profiluser:read","apprenant:read","formateur:read","groupe:read","groupe_apprenant:read","promo:read","promo_principal:read","promo_formateur:read","promo_attente:read"})
      * @Assert\NotBlank(
      *     message="This fiels cannot be null !"
      * )
@@ -93,7 +94,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read","profiluser:read","apprenant:read","formateur:read"})
+     * @Groups({"users_of_profils_sortie:read","user:read","profiluser:read","apprenant:read","formateur:read","groupe:read","groupe_apprenant:read","promo:read","promo_principal:read","promo_formateur:read","promo_attente:read"})
      * @Assert\NotBlank(
      *     message="This fiels cannot be null !"
      * )
@@ -102,14 +103,12 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"user:read"})
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank(
-     *     message="This fiels cannot be null !"
-     * )
      */
     private $archived = false;
 
@@ -237,9 +236,13 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAvatar()
+    public function getAvatar(): ?string
     {
-        return $this->avatar;
+        if ($this->avatar) {
+            $avatar_str = stream_get_contents($this->avatar);
+            return base64_encode($avatar_str);
+        }
+        return null;
     }
 
     public function setAvatar($avatar): self

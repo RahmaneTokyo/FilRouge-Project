@@ -5,11 +5,11 @@ namespace App\DataPersister;
 
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Entity\User;
+use App\Entity\ProfilSortie;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserDataPersister implements ContextAwareDataPersisterInterface
+class ProfilSortieDataPersister implements ContextAwareDataPersisterInterface
 {
 
     /**
@@ -29,7 +29,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
     
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User;
+        return $data instanceof ProfilSortie;
     }
 
     public function persist($data, array $context = [])

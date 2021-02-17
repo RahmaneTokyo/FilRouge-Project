@@ -4,36 +4,29 @@
 namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Entity\Competence;
-use App\Repository\NiveauRepository;
+use App\Entity\GpeCompetence;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CompetenceDataPersister implements ContextAwareDataPersisterInterface
+class GpeCompetenceDataPersister implements ContextAwareDataPersisterInterface
 {
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
-    /**
-     * @var NiveauRepository
-     */
-    private $niveauRepository;
 
     /**
      *
      * @param EntityManagerInterface $entityManager
-     * @param NiveauRepository $niveauRepository
      */
 
-    public function __construct(EntityManagerInterface $entityManager, NiveauRepository $niveauRepository)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->niveauRepository = $niveauRepository;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Competence;
+        return $data instanceof GpeCompetence;
     }
 
     public function persist($data, array $context = [])
@@ -45,13 +38,6 @@ class CompetenceDataPersister implements ContextAwareDataPersisterInterface
     public function remove($data, array $context = [])
     {
         $data->setArchived(true);
-        $id = $data->getId();
-        $niveau = $this->niveauRepository->findBy(['competence' =>$id]);
-        foreach ($niveau as $niveaux)
-        {
-            $niveaux->setArchived(false);
-            $this->entityManager->persist($niveaux);
-        }
         $this->entityManager->flush();
     }
 }
